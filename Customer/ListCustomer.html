@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Details</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .container { width: 60%; margin: auto; }
+        .account { border: 1px solid #ddd; padding: 10px; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Customer Details</h2>
+
+    <!-- Input field for Customer ID -->
+    <label for="customerId">Enter Customer ID:</label>
+    <input type="number" id="customerId" placeholder="Enter customer ID">
+
+    <button id="fetchData">Fetch Customer Data</button>
+    <div id="customerDetails"></div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        $("#fetchData").click(function() {
+            // Get the customer ID from the input field
+            let customerId = $("#customerId").val();
+
+            // Check if customerId is empty
+            if (!customerId) {
+                alert("Please enter a Customer ID.");
+                return;
+            }
+
+            let url = `http://localhost:8080/api/v1/customers/${customerId}`;
+
+            $.ajax({
+                url: url,
+                type: "GET", // Changed from POST to GET
+                contentType: "application/json",
+                success: function(response) {
+                    let output = `<h3>ID: ${response.id}</h3>`;
+                    output += `<p>Name: ${response.firstName} ${response.lastName}</p>`;
+                    output += `<h4>Accounts:</h4>`;
+
+                    response.accounts.forEach(account => {
+                        output += `<div class='account'>`;
+                        output += `<p><strong>Account Type:</strong> ${account.accountType}</p>`;
+                        output += `<p><strong>Balance:</strong> $${account.balance.toFixed(2)}</p>`;
+                        output += `<h5>Transactions:</h5>`;
+                        output += `<ul>`;
+
+                        account.transactions.forEach(transaction => {
+                            output += `<li>Transaction ID: ${transaction.id}, Amount: $${transaction.amount}</li>`;
+                        });
+
+                        output += `</ul>`;
+                        output += `</div>`;
+                    });
+
+                    $("#customerDetails").html(output);
+                },
+                error: function(xhr, status, error) {
+                    console.log("Error Status:", status);
+                    console.log("XHR Response:", xhr.responseText);
+                    console.log("Error Message:", error);
+                    alert("Error fetching customer data: " + xhr.responseText);
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>

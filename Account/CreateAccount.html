@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Send POST Request</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+<h2>Create Account</h2>
+
+<label for="customerId">Customer ID:</label>
+<input type="text" id="customerId" placeholder="Enter Customer ID">
+<br><br>
+
+<label for="initialCredit">Initial Credit:</label>
+<input type="number" id="initialCredit" placeholder="Enter Initial Credit">
+<br><br>
+
+<button id="submitButton">Create Account</button>
+
+<script>
+    $(document).ready(function() {
+        // On button click, send POST request
+        $('#submitButton').click(function() {
+            var customerId = $('#customerId').val(); // Get customer ID from input
+            var initialCredit = parseFloat($('#initialCredit').val()); // Get initial credit from input
+
+            // Validate input
+            if (!customerId || isNaN(customerId) || customerId >= 4 || isNaN(initialCredit) || initialCredit <= 0 ) {
+                alert("Please enter valid values.");
+                return;
+            }
+
+            var data = {
+                "initialCredit": initialCredit
+            };
+
+            // Send POST request
+            $.ajax({
+                url: "http://localhost:8080/api/v1/customers/" + customerId + "/accounts",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify(data),
+                success: function(response) {
+                    alert("Account created successfully!");
+                    console.log("Response:", response);
+                },
+                error: function(xhr, status, error) {
+                    alert("Error creating account.");
+                    console.log("Error:", error);
+                }
+            });
+        });
+    });
+</script>
+
+</body>
+</html>

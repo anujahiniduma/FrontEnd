@@ -1,0 +1,2 @@
+This is a sample UI for Bank App
+Change the running port of this application to the CROSS Origin port mentioned in application.properties of backend application.
